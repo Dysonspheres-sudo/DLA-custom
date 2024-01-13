@@ -50,10 +50,6 @@ class WhiteWalker:
 		# initialize attributes
 		self.y = 0
 		self.foundFriend = False
-		self.nearEdgeUp = False
-		self.nearEdgeDown = False
-		self.nearEdgeRight = False
-		self.nearEdgeLeft = False
 		self.addedCount = 0
 		self.x = 0
 		self.y = 0
@@ -147,21 +143,12 @@ class WhiteWalker:
 			else:
 				self.y = self.y - 1
 
-		self.nearEdgeDown = False
-		self.nearEdgeUp = False
-		self.nearEdgeRight = False
-		self.nearEdgeLeft = False
-
 
 class BlackWalker:
 
 	def __init__(self):
 		# initialize attributes
 		self.foundEnemy = False  # not near white
-		self.nearEdgeUp = False
-		self.nearEdgeDown = False
-		self.nearEdgeRight = False
-		self.nearEdgeLeft = False
 		self.x = 0
 		self.y = 0
 		self.addedCount = 0
@@ -256,8 +243,3 @@ class BlackWalker:
 				self.random_walk(matrix)
 			else:
 				self.y = self.y - 1
-
-		self.nearEdgeDown = False
-		self.nearEdgeUp = False
-		self.nearEdgeRight = False
-		self.nearEdgeLeft = False

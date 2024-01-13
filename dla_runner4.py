@@ -70,7 +70,7 @@ while not completeCluster:
 
 pbar.close()
 
-print(f'cluster 100% complete at {white_walker.addedCount} particles')
+print(f'cluster 100% complete at {2*white_walker.addedCount} particles')
 make_gif()
 
 matrix.plot(cmap)
