@@ -1,13 +1,25 @@
 import random
 import matplotlib.pyplot as plt
-import numpy
 import numpy as np
+import os
+import imageio
+
+
+def make_gif():
+    print("Making gif...")
+    images = []
+    filenames = os.listdir("images")
+    # Sort filenames numerically
+    filenames.sort(key=lambda filename: int(filename.replace("cluster", "").replace(".png", "")))
+    for filename in filenames:
+        images.append(imageio.imread("images/" + filename))
+    imageio.mimsave('movie.gif', images, duration=0.1)
 
 
 class Matrix:
 
 	def __init__(self, length_x, length_y):
-		self.value = numpy.zeros((length_x, length_y))
+		self.value = np.zeros((length_x, length_y))
 		self.value[5:length_x - 5, 5:length_y - 5] = 2
 		self.max_y = 5
 		self.length_x = length_x
@@ -19,8 +31,10 @@ class Matrix:
 
 	def save_image(self, walker, interval_print, cmap):
 		interval = range(2, 10000000, interval_print)
+		# Create the "images" folder if it doesn't exist
+		if not os.path.exists("images"):
+			os.makedirs("images")
 		if walker.addedCount in interval:
-			print(f'total cluster added = {walker.addedCount}')
 			label = str(walker.addedCount)
 			plt.title("DLA Cluster", fontsize=20)
 			plt.matshow(self.value, interpolation='nearest', cmap=cmap, origin='lower')  # plt.cm.Blues) #ocean, Paired
