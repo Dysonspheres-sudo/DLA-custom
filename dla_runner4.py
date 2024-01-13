@@ -1,13 +1,13 @@
 import numpy as np
 from matplotlib import colors
-from DLA_module import Matrix, WhiteWalker, BlackWalker
+from DLA_module import Matrix, WhiteWalker, BlackWalker, make_gif
 from tqdm import tqdm
 
 # set of inputs
 length_x = 500  # length x of matrix
 length_y = 500  # length y of matrix
-maxCount = 5000  # maximum number of particles to add
-cmap = colors.ListedColormap(['navy', 'black', 'white'])  # color palette for number 0,1 and 2 in matrix
+maxCount = 1000  # maximum number of particles to add
+cmap = colors.ListedColormap(['black', 'black', 'white'])  # color palette for number 0,1 and 2 in matrix
 
 # Initialize parameter
 randomWalkersCount = 0
@@ -31,7 +31,7 @@ matrix.max_y = 5
 white_walker = WhiteWalker()
 black_walker = BlackWalker()
 
-pbar = tqdm(total=maxCount / 2)
+pbar = tqdm(total=maxCount)
 
 while not completeCluster:
     # spawn a white walker randomly at the circle edge
@@ -44,7 +44,7 @@ while not completeCluster:
         white_walker.check_around(matrix)
         if white_walker.foundFriend is False:
             white_walker.random_walk(matrix)
-    # matrix.plot(cmap)
+
     white_walker.addedCount += 1
 
     # spawn a black walker at the center
@@ -57,7 +57,6 @@ while not completeCluster:
         if black_walker.foundEnemy is False:
             black_walker.random_walk(matrix)
 
-    # matrix.plot(cmap)
     black_walker.addedCount += 1
 
     # check if the cluster is complete
@@ -66,13 +65,12 @@ while not completeCluster:
         print('cluster is complete')
         break
 
-    pbar.update(1)
-    # print(f'cluster {int((white_walker.addedCount + black_walker.addedCount)/maxcount*100)}% complete at
-    # {white_walker.addedCount + black_walker.addedCount} particles')
-
-    # matrix.print_info(white_walker,100,cmap)
+    pbar.update(2)
+    matrix.save_image(walker=white_walker, cmap=cmap, interval_print =50)
 
 pbar.close()
 
 print(f'cluster 100% complete at {white_walker.addedCount} particles')
+make_gif()
+
 matrix.plot(cmap)

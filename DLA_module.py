@@ -1,14 +1,26 @@
 import random
 import matplotlib.pyplot as plt
-import numpy
 import numpy as np
+import os
+import imageio
+
+
+def make_gif():
+    print("Making gif...")
+    images = []
+    filenames = os.listdir("images")
+    # Sort filenames numerically
+    filenames.sort(key=lambda filename: int(filename.replace("cluster", "").replace(".png", "")))
+    for filename in filenames:
+        images.append(imageio.imread("images/" + filename))
+    imageio.mimsave('movie.gif', images, duration=0.1)
 
 
 class Matrix:
 
 	def __init__(self, length_x, length_y):
-		self.value = numpy.zeros((length_x, length_y))
-		self.value[5:length_x - 5, 5:length_y - 5] = 2
+		self.value = np.zeros((length_x, length_y))
+		self.value[0:length_x, 0:length_y] = 2
 		self.max_y = 5
 		self.length_x = length_x
 		self.length_y = length_y
@@ -19,8 +31,10 @@ class Matrix:
 
 	def save_image(self, walker, interval_print, cmap):
 		interval = range(2, 10000000, interval_print)
+		# Create the "images" folder if it doesn't exist
+		if not os.path.exists("images"):
+			os.makedirs("images")
 		if walker.addedCount in interval:
-			print(f'total cluster added = {walker.addedCount}')
 			label = str(walker.addedCount)
 			plt.title("DLA Cluster", fontsize=20)
 			plt.matshow(self.value, interpolation='nearest', cmap=cmap, origin='lower')  # plt.cm.Blues) #ocean, Paired
@@ -79,63 +93,56 @@ class WhiteWalker:
 
 	def check_around(self, matrix):
 		# check up
-		self.nearEdgeUp = False
-		if matrix.value[self.y + 1, self.x] == 1:
-			self.foundFriend = True
-			self.make_friend(matrix)
-		if matrix.value[self.y + 1, self.x] == 0:
-			self.nearEdgeUp = True
+		if self.y + 2 < matrix.length_y:
+			if matrix.value[self.y + 1, self.x] == 1:
+				self.foundFriend = True
+				self.make_friend(matrix)
 
 		# check down
-		if matrix.value[self.y - 1, self.x] == 1:
-			self.foundFriend = True
-			self.make_friend(matrix)
-		if matrix.value[self.y - 1, self.x] == 0:
-			self.nearEdgeDown = True
+		if self.y - 1 > 0:
+			if matrix.value[self.y - 1, self.x] == 1:
+				self.foundFriend = True
+				self.make_friend(matrix)
 
 		# check right
-		self.nearEdgeRight = False
-		if matrix.value[self.y, self.x + 1] == 1:
-			self.foundFriend = True
-			self.make_friend(matrix)
-		if matrix.value[self.y, self.x + 1] == 0:
-			self.nearEdgeRight = True
+		if self.x + 2 < matrix.length_x:
+			if matrix.value[self.y, self.x + 1] == 1:
+				self.foundFriend = True
+				self.make_friend(matrix)
 
 		# check left
-		self.nearEdgeLeft = False
-		if matrix.value[self.y, self.x - 1] == 1:
-			self.foundFriend = True
-			self.make_friend(matrix)
-		if matrix.value[self.y, self.x - 1] == 0:
-			self.nearEdgeLeft = True
+		if self.x - 1 > 0:
+			if matrix.value[self.y, self.x - 1] == 1:
+				self.foundFriend = True
+				self.make_friend(matrix)
 
 	def random_walk(self, matrix):
 		decide = random.random()
 
 		# walk to the left
 		if decide < 0.25:
-			if self.nearEdgeLeft is True:
+			if self.x - 1 < 0:
 				self.random_walk(matrix)
 			else:
 				self.x = self.x - 1
 
 		# walk to the right
 		elif decide < 0.5:
-			if self.nearEdgeRight is True:
+			if self.x + 2 > matrix.length_x:
 				self.random_walk(matrix)
 			else:
 				self.x = self.x + 1
 
 		# walk up
 		elif decide < 0.75:
-			if self.nearEdgeUp is True:
+			if self.y + 2 > matrix.length_y:
 				self.random_walk(matrix)
 			else:
 				self.y = self.y + 1
 
 		# walk down
 		else:
-			if self.nearEdgeDown is True:
+			if self.y - 1 < 0:
 				self.random_walk(matrix)
 			else:
 				self.y = self.y - 1
@@ -196,62 +203,56 @@ class BlackWalker:
 
 	def check_around(self, matrix):
 		# check up
-		if matrix.value[self.y + 1, self.x] == 2:
-			self.foundEnemy = True
-			self.make_enemy(matrix)
-		if matrix.value[self.y + 1, self.x] == 0:
-			self.nearEdgeUp = True
+		if self.y + 1 < matrix.length_y:
+			if matrix.value[self.y + 1, self.x] == 2:
+				self.foundEnemy = True
+				self.make_enemy(matrix)
 
 		# check down
-		if matrix.value[self.y - 1, self.x] == 2:
-			self.foundEnemy = True
-			self.make_enemy(matrix)
-		if matrix.value[self.y - 1, self.x] == 0:
-			self.nearEdgeDown = True
+		if self.y - 1 > 0:
+			if matrix.value[self.y - 1, self.x] == 2:
+				self.foundEnemy = True
+				self.make_enemy(matrix)
 
 		# check right
-		self.nearEdgeRight = False
-		if matrix.value[self.y, self.x + 1] == 2:
-			self.foundEnemy = True
-			self.make_enemy(matrix)
-		if matrix.value[self.y, self.x + 1] == 0:
-			self.nearEdgeRight = True
+		if self.x + 1 < matrix.length_x:
+			if matrix.value[self.y, self.x + 1] == 2:
+				self.foundEnemy = True
+				self.make_enemy(matrix)
 
 		# check left
-		self.nearEdgeLeft = False
-		if matrix.value[self.y, self.x - 1] == 2:
-			self.foundEnemy = True
-			self.make_enemy(matrix)
-		if matrix.value[self.y, self.x - 1] == 0:
-			self.nearEdgeLeft = True
+		if self.x - 1 > 0:
+			if matrix.value[self.y, self.x - 1] == 2:
+				self.foundEnemy = True
+				self.make_enemy(matrix)
 
 	def random_walk(self, matrix):
 		decide = random.random()
 
 		# walk to the left
 		if decide < 0.25:
-			if self.nearEdgeLeft is True:
+			if self.x - 1 < 0:
 				self.random_walk(matrix)
 			else:
 				self.x = self.x - 1
 
 		# walk to the right
 		elif decide < 0.5:
-			if self.nearEdgeRight is True:
+			if self.x + 1 > matrix.length_x:
 				self.random_walk(matrix)
 			else:
 				self.x = self.x + 1
 
 		# walk up
 		elif decide < 0.75:
-			if self.nearEdgeUp is True:
+			if self.y + 1 > matrix.length_y:
 				self.random_walk(matrix)
 			else:
 				self.y = self.y + 1
 
 		# walk down
 		else:
-			if self.nearEdgeDown is True:
+			if self.y - 1 < 0:
 				self.random_walk(matrix)
 			else:
 				self.y = self.y - 1
