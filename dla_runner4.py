@@ -7,7 +7,7 @@ from tqdm import tqdm
 length_x = 500  # length x of matrix
 length_y = 500  # length y of matrix
 maxCount = 1000  # maximum number of particles to add
-cmap = colors.ListedColormap(['navy', 'black', 'white'])  # color palette for number 0,1 and 2 in matrix
+cmap = colors.ListedColormap(['black', 'black', 'white'])  # color palette for number 0,1 and 2 in matrix
 
 # Initialize parameter
 randomWalkersCount = 0
@@ -44,7 +44,7 @@ while not completeCluster:
         white_walker.check_around(matrix)
         if white_walker.foundFriend is False:
             white_walker.random_walk(matrix)
-    # matrix.plot(cmap)
+
     white_walker.addedCount += 1
 
     # spawn a black walker at the center
@@ -57,7 +57,6 @@ while not completeCluster:
         if black_walker.foundEnemy is False:
             black_walker.random_walk(matrix)
 
-    # matrix.plot(cmap)
     black_walker.addedCount += 1
 
     # check if the cluster is complete
@@ -71,7 +70,7 @@ while not completeCluster:
 
 pbar.close()
 
-print(f'cluster 100% complete at {white_walker.addedCount} particles')
+print(f'cluster 100% complete at {2*white_walker.addedCount} particles')
 make_gif()
 
 matrix.plot(cmap)
