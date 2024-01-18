@@ -2,7 +2,7 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-import imageio
+import imageio.v2 as imageio
 
 
 def make_gif():
@@ -13,7 +13,8 @@ def make_gif():
     filenames.sort(key=lambda filename: int(filename.replace("cluster", "").replace(".png", "")))
     for filename in filenames:
         images.append(imageio.imread("images/" + filename))
-    imageio.mimsave('movie.gif', images, duration=0.1)
+    imageio.mimsave('movie.gif', images, duration=0.3)
+    print("Done!")
 
 
 class Matrix:
@@ -29,13 +30,13 @@ class Matrix:
 		plt.matshow(self.value, interpolation='nearest', cmap=cmap, origin='lower')
 		plt.show()
 
-	def save_image(self, walker, interval_print, cmap):
+	def save_image(self, total_added, interval_print, cmap):
 		interval = range(2, 10000000, interval_print)
 		# Create the "images" folder if it doesn't exist
 		if not os.path.exists("images"):
 			os.makedirs("images")
-		if walker.addedCount in interval:
-			label = str(walker.addedCount)
+		if total_added in interval:
+			label = str(total_added).zfill(5)
 			plt.title("DLA Cluster", fontsize=20)
 			plt.matshow(self.value, interpolation='nearest', cmap=cmap, origin='lower')  # plt.cm.Blues) #ocean, Paired
 			plt.xlabel("direction, $x$", fontsize=15)
@@ -243,3 +244,6 @@ class BlackWalker:
 				self.random_walk(matrix)
 			else:
 				self.y = self.y - 1
+
+if __name__ == '__main__':
+	make_gif()
