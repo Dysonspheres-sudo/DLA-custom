@@ -72,3 +72,4 @@ while not completeCluster:
 pbar.close()
 
 print(f'cluster 100% complete at {total_added} particles')
+make_gif()

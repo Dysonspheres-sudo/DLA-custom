@@ -26,15 +26,16 @@ class Matrix:
 		self.length_x = length_x
 		self.length_y = length_y
 
+		# Check for the existence of the "images" directory when the Matrix is created
+		if not os.path.exists("images"):
+			os.makedirs("images")
+
 	def plot(self, cmap):
 		plt.matshow(self.value, interpolation='nearest', cmap=cmap, origin='lower')
 		plt.show()
 
 	def save_image(self, total_added, interval_print, cmap):
 		interval = range(2, 10000000, interval_print)
-		# Create the "images" folder if it doesn't exist
-		if not os.path.exists("images"):
-			os.makedirs("images")
 		if total_added in interval:
 			label = str(total_added).zfill(5)
 			plt.title("DLA Cluster", fontsize=20)
@@ -57,10 +58,9 @@ class WhiteWalker:
 
 	def random_at_white(self, matrix):
 		indices = np.where(matrix.value == 2)
-		indices = list(zip(indices[0], indices[1]))  # convert indices to list of tuples
-		random_index = random.choice(indices)
-		self.x = random_index[0]
-		self.y = random_index[1]
+		random_index = np.random.randint(len(indices[0]))
+		self.x = indices[0][random_index]
+		self.y = indices[1][random_index]
 
 	def random_at_circle_edge(self, radius, length_x, length_y):
 		# Generate a random angle
